@@ -58,51 +58,49 @@ defmodule EthereumApi.Types.TransactionReceipt do
 
   use Struct, {
     [Struct.FromTerm],
-    [
-      transaction_hash: [
-        type: EthereumApi.Types.Data32,
-        "Struct.FromTerm": [keys: "transactionHash"]
-      ],
-      transaction_index: [
-        type: EthereumApi.Types.Quantity,
-        "Struct.FromTerm": [keys: "transactionIndex"]
-      ],
-      block_hash: [
-        type: EthereumApi.Types.Data32,
-        "Struct.FromTerm": [keys: "blockHash"]
-      ],
-      block_number: [
-        type: EthereumApi.Types.Quantity,
-        "Struct.FromTerm": [keys: "blockNumber"]
-      ],
-      from: EthereumApi.Types.Data20,
-      to: {:option, EthereumApi.Types.Data20},
-      cumulative_gas_used: [
-        type: EthereumApi.Types.Quantity,
-        "Struct.FromTerm": [keys: "cumulativeGasUsed"]
-      ],
-      effective_gas_price: [
-        type: EthereumApi.Types.Quantity,
-        "Struct.FromTerm": [keys: "effectiveGasPrice"]
-      ],
-      gas_used: [
-        type: EthereumApi.Types.Quantity,
-        "Struct.FromTerm": [keys: "gasUsed"]
-      ],
-      contract_address: [
-        type: {:option, EthereumApi.Types.Data20},
-        "Struct.FromTerm": [keys: "contractAddress"]
-      ],
-      logs: {:list, EthereumApi.Types.Log},
-      logs_bloom: [
-        type: EthereumApi.Types.Data256,
-        "Struct.FromTerm": [keys: "logsBloom"]
-      ],
+    transaction_hash: [
+      type: EthereumApi.Types.Data32,
+      "Struct.FromTerm": [keys: "transactionHash"]
+    ],
+    transaction_index: [
       type: EthereumApi.Types.Quantity,
-      status: [
-        type: EthereumApi.Types.TransactionReceipt.Status,
-        "Struct.FromTerm": [keys: ["status", "root"]]
-      ]
+      "Struct.FromTerm": [keys: "transactionIndex"]
+    ],
+    block_hash: [
+      type: EthereumApi.Types.Data32,
+      "Struct.FromTerm": [keys: "blockHash"]
+    ],
+    block_number: [
+      type: EthereumApi.Types.Quantity,
+      "Struct.FromTerm": [keys: "blockNumber"]
+    ],
+    from: EthereumApi.Types.Data20,
+    to: {:option, EthereumApi.Types.Data20},
+    cumulative_gas_used: [
+      type: EthereumApi.Types.Quantity,
+      "Struct.FromTerm": [keys: "cumulativeGasUsed"]
+    ],
+    effective_gas_price: [
+      type: EthereumApi.Types.Quantity,
+      "Struct.FromTerm": [keys: "effectiveGasPrice"]
+    ],
+    gas_used: [
+      type: EthereumApi.Types.Quantity,
+      "Struct.FromTerm": [keys: "gasUsed"]
+    ],
+    contract_address: [
+      type: {:option, EthereumApi.Types.Data20},
+      "Struct.FromTerm": [keys: "contractAddress"]
+    ],
+    logs: {:list, EthereumApi.Types.Log},
+    logs_bloom: [
+      type: EthereumApi.Types.Data256,
+      "Struct.FromTerm": [keys: "logsBloom"]
+    ],
+    type: EthereumApi.Types.Quantity,
+    status: [
+      type: EthereumApi.Types.TransactionReceipt.Status,
+      "Struct.FromTerm": [keys: ["status", "root"]]
     ]
   }
 end

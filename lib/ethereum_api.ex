@@ -10,7 +10,7 @@ defmodule EthereumApi do
       method: "web3_clientVersion",
       doc: "Returns the current client version.",
       response_type: String.t(),
-      response_parser: &Struct.Types.Str.from_term/1
+      response_parser: &parse_string_response/1
     },
     %{
       method: "web3_sha3",
@@ -29,13 +29,13 @@ defmodule EthereumApi do
       method: "net_version",
       doc: "Returns the current network id.",
       response_type: String.t(),
-      response_parser: &Struct.Types.Str.from_term/1
+      response_parser: &parse_string_response/1
     },
     %{
       method: "net_listening",
       doc: "Returns true if client is actively listening for network connections.",
       response_type: Struct.Types.Bool.t(),
-      response_parser: &Struct.Types.Bool.from_term/1
+      response_parser: &parse_boolean_response/1
     },
     %{
       method: "net_peerCount",
@@ -52,7 +52,7 @@ defmodule EthereumApi do
         (see https://github.com/ethereum/go-ethereum/pull/22064#issuecomment-788682924).
       """,
       response_type: String.t(),
-      response_parser: &Struct.Types.Str.from_term/1
+      response_parser: &parse_string_response/1
     },
     %{
       method: "eth_syncing",
@@ -77,7 +77,7 @@ defmodule EthereumApi do
         clients since The Merge.
       """,
       response_type: Struct.Types.Bool.t(),
-      response_parser: &Struct.Types.Bool.from_term/1
+      response_parser: &parse_boolean_response/1
     },
     %{
       method: "eth_hashrate",
@@ -533,7 +533,11 @@ defmodule EthereumApi do
       args_transformer!: fn block_hash, full_transaction_objects? ->
         [
           EthereumApi.Types.Data32.from_term!(block_hash),
-          Struct.Types.Bool.from_term!(full_transaction_objects?)
+          if is_boolean(full_transaction_objects?) do
+            full_transaction_objects?
+          else
+            raise ArgumentError, "Expected a boolean, got #{inspect(full_transaction_objects?)}"
+          end
         ]
       end,
       response_type: Option.t(EthereumApi.Types.Block.t()),
@@ -556,7 +560,11 @@ defmodule EthereumApi do
       args_transformer!: fn block_number_or_tag, full_transaction_objects? ->
         [
           quantity_or_tag_from_term!(block_number_or_tag),
-          Struct.Types.Bool.from_term!(full_transaction_objects?)
+          if is_boolean(full_transaction_objects?) do
+            full_transaction_objects?
+          else
+            raise ArgumentError, "Expected a boolean, got #{inspect(full_transaction_objects?)}"
+          end
         ]
       end,
       response_type: Option.t(EthereumApi.Types.Block.t()),
@@ -766,7 +774,7 @@ defmodule EthereumApi do
       args: {filter_id, EthereumApi.Types.Quantity.t()},
       args_transformer!: &EthereumApi.Types.Quantity.from_term!/1,
       response_type: Struct.Types.Bool.t(),
-      response_parser: &Struct.Types.Bool.from_term/1
+      response_parser: &parse_boolean_response/1
     },
     %{
       method: "eth_getFilterChanges",
@@ -988,5 +996,29 @@ defmodule EthereumApi do
       EthereumApi.Types.Tag.from_term(value)
       |> Result.expect!("Expected a quantity or tag, found #{inspect(value)}")
     end)
+  end
+
+  @spec parse_boolean_response(any) :: Result.t(boolean(), String.t())
+  defp parse_boolean_response(response) do
+    if is_boolean(response) do
+      {:ok, response}
+    else
+      {:error, "Expected a boolean, got #{inspect(response)}"}
+    end
+  end
+
+  @spec parse_boolean_response(any) :: Result.t(String.t(), String.t())
+  defp parse_string_response(response) do
+    error = fn value -> {:error, "Expected a string got #{value}"} end
+
+    if is_binary(response) do
+      if String.valid?(response) do
+        {:ok, response}
+      else
+        error.(response)
+      end
+    else
+      error.(response)
+    end
   end
 end
