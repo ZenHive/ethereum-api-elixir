@@ -34,7 +34,7 @@ defmodule EthereumApi do
     %{
       method: "net_listening",
       doc: "Returns true if client is actively listening for network connections.",
-      response_type: Struct.Types.Bool.t(),
+      response_type: boolean(),
       response_parser: &parse_boolean_response/1
     },
     %{
@@ -76,7 +76,7 @@ defmodule EthereumApi do
         This can only return true for proof-of-work networks and may not be available in some
         clients since The Merge.
       """,
-      response_type: Struct.Types.Bool.t(),
+      response_type: boolean(),
       response_parser: &parse_boolean_response/1
     },
     %{
@@ -528,7 +528,7 @@ defmodule EthereumApi do
       """,
       args: [
         {block_hash, EthereumApi.Types.Data32.t()},
-        {full_transaction_objects?, Struct.Types.Bool.t()}
+        {full_transaction_objects?, boolean()}
       ],
       args_transformer!: fn block_hash, full_transaction_objects? ->
         [
@@ -555,7 +555,7 @@ defmodule EthereumApi do
       """,
       args: [
         {block_number_or_tag, EthereumApi.Types.Quantity.t() | EthereumApi.Types.Tag.t()},
-        {full_transaction_objects?, Struct.Types.Bool.t()}
+        {full_transaction_objects?, boolean()}
       ],
       args_transformer!: fn block_number_or_tag, full_transaction_objects? ->
         [
@@ -773,7 +773,7 @@ defmodule EthereumApi do
       """,
       args: {filter_id, EthereumApi.Types.Quantity.t()},
       args_transformer!: &EthereumApi.Types.Quantity.from_term!/1,
-      response_type: Struct.Types.Bool.t(),
+      response_type: boolean(),
       response_parser: &parse_boolean_response/1
     },
     %{

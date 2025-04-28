@@ -31,7 +31,7 @@ defmodule EthereumApi.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:result, git: "git@github.com:ZenHive/result_elixir.git", tag: "v0.4.0", override: true},
       {:option, git: "git@github.com:ZenHive/option_elixir.git", tag: "v0.1.0", override: true},
-      {:struct, git: "https://github.com/ZenHive/struct_elixir.git", tag: "v0.1.0"},
+      {:struct, git: "https://github.com/ZenHive/struct_elixir.git", tag: "v0.1.1"},
       {:json_rpc, git: "https://github.com/ZenHive/json_rpc_elixir.git", tag: "v0.6.0"},
     ]
   end

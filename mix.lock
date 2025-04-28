@@ -11,6 +11,6 @@
   "option": {:git, "git@github.com:ZenHive/option_elixir.git", "405b80b7059b8e78f63beab0dff8cc0fc84da185", [tag: "v0.1.0"]},
   "poison": {:hex, :poison, "6.0.0", "9bbe86722355e36ffb62c51a552719534257ba53f3271dacd20fbbd6621a583a", [:mix], [{:decimal, "~> 2.1", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "bb9064632b94775a3964642d6a78281c07b7be1319e0016e1643790704e739a2"},
   "result": {:git, "git@github.com:ZenHive/result_elixir.git", "0e859663b5b8733331b56f02c955916df29fc42a", [tag: "v0.4.0"]},
-  "struct": {:git, "https://github.com/ZenHive/struct_elixir.git", "a4e48a215d74de4a4927ee2076e4c9302c8e502f", [tag: "v0.1.0"]},
+  "struct": {:git, "https://github.com/ZenHive/struct_elixir.git", "0f18927a90ed7ea2706c54db08476a52acd1a66a", [tag: "v0.1.1"]},
   "websockex": {:hex, :websockex, "0.4.3", "92b7905769c79c6480c02daacaca2ddd49de936d912976a4d3c923723b647bf0", [:mix], [], "hexpm", "95f2e7072b85a3a4cc385602d42115b73ce0b74a9121d0d6dbbf557645ac53e4"},
 }
