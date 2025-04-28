@@ -4,7 +4,7 @@ defmodule EthereumApi.MixProject do
   def project do
     [
       app: :ethereum_api,
-      version: "0.1.0-b3",
+      version: "0.1.0-b4",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -33,6 +33,8 @@ defmodule EthereumApi.MixProject do
       {:option, git: "git@github.com:ZenHive/option_elixir.git", tag: "v0.1.0", override: true},
       {:struct, git: "https://github.com/ZenHive/struct_elixir.git", tag: "v0.1.1"},
       {:json_rpc, git: "https://github.com/ZenHive/json_rpc_elixir.git", tag: "v0.6.0"},
+      # {:ex_keccak, "~> 0.7.6"},
+      # {:ex_abi, "~> 0.8.3"}
     ]
   end
 end
