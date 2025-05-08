@@ -10,7 +10,7 @@ by adding `ethereum_api` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ethereum_api, git: "https://github.com/ZenHive/ethereum-api-elixir.git", tag: "v0.1.0-b4"},
+    {:ethereum_api, git: "https://github.com/ZenHive/ethereum-api-elixir.git", tag: "v0.1.0-b5"},
   ]
 end
 ```
