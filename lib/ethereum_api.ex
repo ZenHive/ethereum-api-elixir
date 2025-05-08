@@ -1,6 +1,6 @@
 defmodule EthereumApi do
   @spec start_link(JsonRpc.Client.WebSocket.conn_info(), [JsonRpc.Client.WebSocket.option()]) ::
-          Result.t(pid(), term())
+          {:ok, pid()} | {:error, term()}
   def start_link(url, opts \\ []) do
     JsonRpc.Client.WebSocket.start_link(url, opts)
   end
@@ -540,7 +540,7 @@ defmodule EthereumApi do
           end
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Block.t()),
+      response_type: nil | EthereumApi.Types.Block.t(),
       response_parser: &EthereumApi.Types.Block.from_term_optional/1
     },
     %{
@@ -567,7 +567,7 @@ defmodule EthereumApi do
           end
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Block.t()),
+      response_type: nil | EthereumApi.Types.Block.t(),
       response_parser: &EthereumApi.Types.Block.from_term_optional/1
     },
     %{
@@ -580,7 +580,7 @@ defmodule EthereumApi do
       """,
       args: {transaction_hash, EthereumApi.Types.Data32.t()},
       args_transformer!: &EthereumApi.Types.Data32.from_term!/1,
-      response_type: Option.t(EthereumApi.Types.Transaction.t()),
+      response_type: nil | EthereumApi.Types.Transaction.t(),
       response_parser: &EthereumApi.Types.Transaction.from_term_optional/1
     },
     %{
@@ -602,7 +602,7 @@ defmodule EthereumApi do
           EthereumApi.Types.Quantity.from_term!(transaction_index)
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Transaction.t()),
+      response_type: nil | EthereumApi.Types.Transaction.t(),
       response_parser: &EthereumApi.Types.Transaction.from_term_optional/1
     },
     %{
@@ -625,7 +625,7 @@ defmodule EthereumApi do
           EthereumApi.Types.Quantity.from_term!(transaction_index)
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Transaction.t()),
+      response_type: nil | EthereumApi.Types.Transaction.t(),
       response_parser: &EthereumApi.Types.Transaction.from_term_optional/1
     },
     %{
@@ -639,11 +639,11 @@ defmodule EthereumApi do
         - transaction_hash: Hash of a transaction
 
         # Returns
-        - Option.t(TransactionReceipt.t()) - A transaction receipt object, or nil when no receipt was found
+        - nil | TransactionReceipt.t() - A transaction receipt object, or nil when no receipt was found
       """,
       args: {transaction_hash, EthereumApi.Types.Data32.t()},
       args_transformer!: &EthereumApi.Types.Data32.from_term!/1,
-      response_type: Option.t(EthereumApi.Types.TransactionReceipt.t()),
+      response_type: nil | EthereumApi.Types.TransactionReceipt.t(),
       response_parser: &EthereumApi.Types.TransactionReceipt.from_term_optional/1
     },
     %{
@@ -656,7 +656,7 @@ defmodule EthereumApi do
         - uncle_index: Uncle index position
 
         # Returns
-        - Option.t(Block.t()) - An uncle block object, or nil when no uncle was found
+        - nil | Block.t() - An uncle block object, or nil when no uncle was found
       """,
       args: [
         {block_hash, EthereumApi.Types.Data32.t()},
@@ -668,7 +668,7 @@ defmodule EthereumApi do
           EthereumApi.Types.Quantity.from_term!(uncle_index)
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Block.t()),
+      response_type: nil | EthereumApi.Types.Block.t(),
       response_parser: &(IO.inspect(&1) |> EthereumApi.Types.Block.from_term_optional())
     },
     %{
@@ -682,7 +682,7 @@ defmodule EthereumApi do
         - uncle_index: Uncle index position
 
         # Returns
-        - Option.t(Block.t()) - An uncle block object, or nil when no uncle was found
+        - nil | Block.t() - An uncle block object, or nil when no uncle was found
       """,
       args: [
         {block_number_or_tag, EthereumApi.Types.Quantity.t() | EthereumApi.Types.Tag.t()},
@@ -694,7 +694,7 @@ defmodule EthereumApi do
           EthereumApi.Types.Quantity.from_term!(uncle_index)
         ]
       end,
-      response_type: Option.t(EthereumApi.Types.Block.t()),
+      response_type: nil | EthereumApi.Types.Block.t(),
       response_parser: &EthereumApi.Types.Block.from_term_optional/1
     },
     %{
@@ -793,13 +793,10 @@ defmodule EthereumApi do
       """,
       args: {filter_id, EthereumApi.Types.Quantity.t()},
       args_transformer!: &EthereumApi.Types.Quantity.from_term!/1,
-      response_type: {
-        :type_alias,
-        Option.t(
-          {:log, [EthereumApi.Types.Log.t()]}
-          | {:hash, [EthereumApi.Types.Data32.t()]}
-        )
-      },
+      response_type:
+        nil
+        | {:log, [EthereumApi.Types.Log.t()]}
+        | {:hash, [EthereumApi.Types.Data32.t()]},
       response_parser: &parse_filer_result/1
     },
     %{
@@ -976,13 +973,19 @@ defmodule EthereumApi do
             EthereumApi.Types.Log.from_term(elem)
             |> Result.map(&[&1 | acc])
           end)
-          |> Result.map(&{:log, Enum.reverse(&1)})
+          |> case do
+            {:error, reason} -> {:error, reason}
+            {:ok, logs} -> {:ok, {:log, Enum.reverse(logs)}}
+          end
         else
           Result.try_reduce(list, [], fn elem, acc ->
             EthereumApi.Types.Data32.from_term(elem)
             |> Result.map(&[&1 | acc])
           end)
-          |> Result.map(&{:hash, Enum.reverse(&1)})
+          |> case do
+            {:error, reason} -> {:error, reason}
+            {:ok, hashes} -> {:ok, {:hash, Enum.reverse(hashes)}}
+          end
         end
 
       response ->
@@ -998,7 +1001,7 @@ defmodule EthereumApi do
     end)
   end
 
-  @spec parse_boolean_response(any) :: Result.t(boolean(), String.t())
+  @spec parse_boolean_response(any) :: {:ok, boolean()} | {:error, String.t()}
   defp parse_boolean_response(response) do
     if is_boolean(response) do
       {:ok, response}
@@ -1007,7 +1010,7 @@ defmodule EthereumApi do
     end
   end
 
-  @spec parse_boolean_response(any) :: Result.t(String.t(), String.t())
+  @spec parse_boolean_response(any) :: {:ok, String.t()} | {:error, String.t()}
   defp parse_string_response(response) do
     error = fn value -> {:error, "Expected a string got #{value}"} end
 

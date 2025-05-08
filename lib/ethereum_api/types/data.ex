@@ -41,7 +41,7 @@ defmodule EthereumApi.Types.Data do
       iex> EthereumApi.Types.Data.from_term(%{key: "value"})
       {:error, "Invalid data: %{key: \\"value\\"}"}
   """
-  @spec from_term(any()) :: Result.t(t(), String.t())
+  @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
   def from_term(value) when is_binary(value) do
     if is_data?(value) do
       {:ok, value}

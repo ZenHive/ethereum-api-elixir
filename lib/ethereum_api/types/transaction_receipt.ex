@@ -39,7 +39,7 @@ defmodule EthereumApi.Types.TransactionReceipt do
         iex> EthereumApi.Types.TransactionReceipt.Status.from_term(%{key: "value"})
         {:error, "Invalid TransactionStatus: %{key: \\"value\\"}"}
     """
-    @spec from_term(String.t()) :: Result.t(t(), String.t())
+    @spec from_term(String.t()) :: {:ok, t()} | {:error, String.t()}
     def from_term(status) do
       case status do
         "0x1" ->
@@ -49,9 +49,10 @@ defmodule EthereumApi.Types.TransactionReceipt do
           {:ok, :failure}
 
         root ->
-          EthereumApi.Types.Data32.from_term(root)
-          |> Result.map(&{:pre_byzantium, &1})
-          |> Result.map_err(fn _err -> "Invalid TransactionStatus: #{inspect(status)}" end)
+          case EthereumApi.Types.Data32.from_term(root) do
+            {:ok, data} -> {:ok, {:pre_byzantium, data}}
+            {:error, _reason} -> {:error, "Invalid TransactionStatus: #{inspect(status)}"}
+          end
       end
     end
   end

@@ -35,7 +35,7 @@ defmodule EthereumApi.Types.Quantity do
       iex> EthereumApi.Types.Quantity.from_term(%{key: "value"})
       {:error, "Invalid quantity: %{key: \\"value\\"}"}
   """
-  @spec from_term(any()) :: Result.t(t(), String.t())
+  @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
   def from_term(value) when is_binary(value) do
     if is_quantity?(value) do
       {:ok, value}

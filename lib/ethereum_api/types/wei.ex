@@ -29,7 +29,7 @@ defmodule EthereumApi.Types.Wei do
       iex> EthereumApi.Types.Wei.from_term(%{key: "value"})
       {:error, "Invalid quantity: %{key: \\"value\\"}"}
   """
-  @spec from_term(any()) :: Result.t(t(), String.t())
+  @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
   def from_term(value), do: EthereumApi.Types.Quantity.from_term(value)
 
   @doc """

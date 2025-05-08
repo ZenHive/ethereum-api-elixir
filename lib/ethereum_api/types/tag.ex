@@ -54,7 +54,7 @@ defmodule EthereumApi.Types.Tag do
       iex> EthereumApi.Types.Tag.from_term(%{key: "value"})
       {:error, "Invalid tag: %{key: \\"value\\"}"}
   """
-  @spec from_term(any()) :: Result.t(t(), String.t())
+  @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
   def from_term(value) do
     if value in tags() do
       {:ok, value}

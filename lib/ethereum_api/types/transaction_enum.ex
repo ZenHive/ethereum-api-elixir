@@ -69,17 +69,19 @@ defmodule EthereumApi.Types.TransactionEnum do
         "Invalid TransactionEnum: Failed to parse field from of Elixir.EthereumApi.Types.Transaction: Invalid Data20: nil"
       }
   """
-  @spec from_term(any()) :: Result.t(t(), String.t())
+  @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
   def from_term(value) when is_map(value) do
-    EthereumApi.Types.Transaction.from_term(value)
-    |> Result.map(&{:full, &1})
-    |> Result.map_err(&"Invalid TransactionEnum: #{&1}")
+    case EthereumApi.Types.Transaction.from_term(value) do
+      {:ok, transaction} -> {:ok, {:full, transaction}}
+      {:error, reason} -> {:error, "Invalid TransactionEnum: #{reason}"}
+    end
   end
 
   def from_term(value) when is_binary(value) do
-    EthereumApi.Types.Data32.from_term(value)
-    |> Result.map(&{:hash, &1})
-    |> Result.map_err(&"Invalid TransactionEnum: #{&1}")
+    case EthereumApi.Types.Data32.from_term(value) do
+      {:ok, transaction} -> {:ok, {:hash, transaction}}
+      {:error, reason} -> {:error, "Invalid TransactionEnum: #{reason}"}
+    end
   end
 
   def from_term(value), do: {:error, "Invalid TransactionEnum: #{inspect(value)}"}
