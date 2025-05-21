@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Tag do
+defmodule EthereumApi.Tag do
   @moduledoc """
   Represents block tags used in Ethereum API calls.
 
@@ -11,7 +11,7 @@ defmodule EthereumApi.Types.Tag do
 
   ## Examples
 
-      iex> EthereumApi.Types.Tag.tags()
+      iex> EthereumApi.Tag.tags()
       ["latest", "earliest", "pending", "safe", "finalized"]
   """
   @spec tags() :: [String.t()]
@@ -24,34 +24,34 @@ defmodule EthereumApi.Types.Tag do
 
   ## Examples
 
-      iex> EthereumApi.Types.Tag.from_term("latest")
+      iex> EthereumApi.Tag.from_term("latest")
       {:ok, "latest"}
 
-      iex> EthereumApi.Types.Tag.from_term("earliest")
+      iex> EthereumApi.Tag.from_term("earliest")
       {:ok, "earliest"}
 
-      iex> EthereumApi.Types.Tag.from_term("pending")
+      iex> EthereumApi.Tag.from_term("pending")
       {:ok, "pending"}
 
-      iex> EthereumApi.Types.Tag.from_term("safe")
+      iex> EthereumApi.Tag.from_term("safe")
       {:ok, "safe"}
 
-      iex> EthereumApi.Types.Tag.from_term("finalized")
+      iex> EthereumApi.Tag.from_term("finalized")
       {:ok, "finalized"}
 
-      iex> EthereumApi.Types.Tag.from_term("invalid")
+      iex> EthereumApi.Tag.from_term("invalid")
       {:error, "Invalid tag: \\"invalid\\""}
 
-      iex> EthereumApi.Types.Tag.from_term(123)
+      iex> EthereumApi.Tag.from_term(123)
       {:error, "Invalid tag: 123"}
 
-      iex> EthereumApi.Types.Tag.from_term(:atom)
+      iex> EthereumApi.Tag.from_term(:atom)
       {:error, "Invalid tag: :atom"}
 
-      iex> EthereumApi.Types.Tag.from_term([1, 2, 3])
+      iex> EthereumApi.Tag.from_term([1, 2, 3])
       {:error, "Invalid tag: [1, 2, 3]"}
 
-      iex> EthereumApi.Types.Tag.from_term(%{key: "value"})
+      iex> EthereumApi.Tag.from_term(%{key: "value"})
       {:error, "Invalid tag: %{key: \\"value\\"}"}
   """
   @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
@@ -70,34 +70,34 @@ defmodule EthereumApi.Types.Tag do
 
   ## Examples
 
-      iex> EthereumApi.Types.Tag.from_term!("latest")
+      iex> EthereumApi.Tag.from_term!("latest")
       "latest"
 
-      iex> EthereumApi.Types.Tag.from_term!("earliest")
+      iex> EthereumApi.Tag.from_term!("earliest")
       "earliest"
 
-      iex> EthereumApi.Types.Tag.from_term!("pending")
+      iex> EthereumApi.Tag.from_term!("pending")
       "pending"
 
-      iex> EthereumApi.Types.Tag.from_term!("safe")
+      iex> EthereumApi.Tag.from_term!("safe")
       "safe"
 
-      iex> EthereumApi.Types.Tag.from_term!("finalized")
+      iex> EthereumApi.Tag.from_term!("finalized")
       "finalized"
 
-      iex> EthereumApi.Types.Tag.from_term!("invalid")
+      iex> EthereumApi.Tag.from_term!("invalid")
       ** (ArgumentError) Expected a tag, found "invalid"
 
-      iex> EthereumApi.Types.Tag.from_term!(123)
+      iex> EthereumApi.Tag.from_term!(123)
       ** (ArgumentError) Expected a tag, found 123
 
-      iex> EthereumApi.Types.Tag.from_term!(:atom)
+      iex> EthereumApi.Tag.from_term!(:atom)
       ** (ArgumentError) Expected a tag, found :atom
 
-      iex> EthereumApi.Types.Tag.from_term!([1, 2, 3])
+      iex> EthereumApi.Tag.from_term!([1, 2, 3])
       ** (ArgumentError) Expected a tag, found [1, 2, 3]
 
-      iex> EthereumApi.Types.Tag.from_term!(%{key: "value"})
+      iex> EthereumApi.Tag.from_term!(%{key: "value"})
       ** (ArgumentError) Expected a tag, found %{key: "value"}
   """
   @spec from_term!(any()) :: t()
@@ -113,25 +113,25 @@ defmodule EthereumApi.Types.Tag do
 
   ## Examples
 
-      iex> EthereumApi.Types.Tag.is_tag?("latest")
+      iex> EthereumApi.Tag.is_tag?("latest")
       true
 
-      iex> EthereumApi.Types.Tag.is_tag?("earliest")
+      iex> EthereumApi.Tag.is_tag?("earliest")
       true
 
-      iex> EthereumApi.Types.Tag.is_tag?("pending")
+      iex> EthereumApi.Tag.is_tag?("pending")
       true
 
-      iex> EthereumApi.Types.Tag.is_tag?("safe")
+      iex> EthereumApi.Tag.is_tag?("safe")
       true
 
-      iex> EthereumApi.Types.Tag.is_tag?("finalized")
+      iex> EthereumApi.Tag.is_tag?("finalized")
       true
 
-      iex> EthereumApi.Types.Tag.is_tag?("invalid")
+      iex> EthereumApi.Tag.is_tag?("invalid")
       false
 
-      iex> EthereumApi.Types.Tag.is_tag?(123)
+      iex> EthereumApi.Tag.is_tag?(123)
       false
   """
   @spec is_tag?(any()) :: boolean()

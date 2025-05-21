@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Log do
+defmodule EthereumApi.Log do
   @moduledoc """
   Represents an Ethereum event log.
   """
@@ -6,27 +6,27 @@ defmodule EthereumApi.Types.Log do
     [Struct.FromTerm],
     removed: :boolean,
     log_index: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "logIndex"]
     ],
     transaction_index: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "transactionIndex"]
     ],
     transaction_hash: [
-      type: EthereumApi.Types.Data32,
+      type: EthereumApi.Data32,
       "Struct.FromTerm": [keys: "transactionHash"]
     ],
     block_hash: [
-      type: EthereumApi.Types.Data32,
+      type: EthereumApi.Data32,
       "Struct.FromTerm": [keys: "blockHash"]
     ],
     block_number: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "blockNumber"]
     ],
-    address: EthereumApi.Types.Data20,
-    data: EthereumApi.Types.Data,
-    topics: {:list, EthereumApi.Types.Data32}
+    address: EthereumApi.Data20,
+    data: EthereumApi.Data,
+    topics: {:list, EthereumApi.Data32}
   }
 end

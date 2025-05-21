@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Quantity do
+defmodule EthereumApi.Quantity do
   @moduledoc """
   Represents a numeric quantity in Ethereum.
   """
@@ -11,28 +11,28 @@ defmodule EthereumApi.Types.Quantity do
 
   ## Examples
 
-      iex> EthereumApi.Types.Quantity.from_term("0x1234")
+      iex> EthereumApi.Quantity.from_term("0x1234")
       {:ok, "0x1234"}
 
-      iex> EthereumApi.Types.Quantity.from_term("0x0")
+      iex> EthereumApi.Quantity.from_term("0x0")
       {:ok, "0x0"}
 
-      iex> EthereumApi.Types.Quantity.from_term("0x")
+      iex> EthereumApi.Quantity.from_term("0x")
       {:error, "Invalid quantity: \\"0x\\""}
 
-      iex> EthereumApi.Types.Quantity.from_term("1234")
+      iex> EthereumApi.Quantity.from_term("1234")
       {:error, "Invalid quantity: \\"1234\\""}
 
-      iex> EthereumApi.Types.Quantity.from_term(1234)
+      iex> EthereumApi.Quantity.from_term(1234)
       {:error, "Invalid quantity: 1234"}
 
-      iex> EthereumApi.Types.Quantity.from_term(:atom)
+      iex> EthereumApi.Quantity.from_term(:atom)
       {:error, "Invalid quantity: :atom"}
 
-      iex> EthereumApi.Types.Quantity.from_term([1, 2, 3])
+      iex> EthereumApi.Quantity.from_term([1, 2, 3])
       {:error, "Invalid quantity: [1, 2, 3]"}
 
-      iex> EthereumApi.Types.Quantity.from_term(%{key: "value"})
+      iex> EthereumApi.Quantity.from_term(%{key: "value"})
       {:error, "Invalid quantity: %{key: \\"value\\"}"}
   """
   @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
@@ -54,19 +54,19 @@ defmodule EthereumApi.Types.Quantity do
 
   ## Examples
 
-      iex> EthereumApi.Types.Quantity.is_quantity?("0x1234")
+      iex> EthereumApi.Quantity.is_quantity?("0x1234")
       true
 
-      iex> EthereumApi.Types.Quantity.is_quantity?("0x0")
+      iex> EthereumApi.Quantity.is_quantity?("0x0")
       true
 
-      iex> EthereumApi.Types.Quantity.is_quantity?("0x")
+      iex> EthereumApi.Quantity.is_quantity?("0x")
       false
 
-      iex> EthereumApi.Types.Quantity.is_quantity?("1234")
+      iex> EthereumApi.Quantity.is_quantity?("1234")
       false
 
-      iex> EthereumApi.Types.Quantity.is_quantity?(1234)
+      iex> EthereumApi.Quantity.is_quantity?(1234)
       false
   """
   @spec is_quantity?(any()) :: boolean()
@@ -83,28 +83,28 @@ defmodule EthereumApi.Types.Quantity do
 
   ## Examples
 
-      iex> EthereumApi.Types.Quantity.from_term!("0x1234")
+      iex> EthereumApi.Quantity.from_term!("0x1234")
       "0x1234"
 
-      iex> EthereumApi.Types.Quantity.from_term!("0x0")
+      iex> EthereumApi.Quantity.from_term!("0x0")
       "0x0"
 
-      iex> EthereumApi.Types.Quantity.from_term!("0x")
+      iex> EthereumApi.Quantity.from_term!("0x")
       ** (ArgumentError) Expected a quantity, found "0x"
 
-      iex> EthereumApi.Types.Quantity.from_term!("1234")
+      iex> EthereumApi.Quantity.from_term!("1234")
       ** (ArgumentError) Expected a quantity, found "1234"
 
-      iex> EthereumApi.Types.Quantity.from_term!(1234)
+      iex> EthereumApi.Quantity.from_term!(1234)
       ** (ArgumentError) Expected a quantity, found 1234
 
-      iex> EthereumApi.Types.Quantity.from_term!(:atom)
+      iex> EthereumApi.Quantity.from_term!(:atom)
       ** (ArgumentError) Expected a quantity, found :atom
 
-      iex> EthereumApi.Types.Quantity.from_term!([1, 2, 3])
+      iex> EthereumApi.Quantity.from_term!([1, 2, 3])
       ** (ArgumentError) Expected a quantity, found [1, 2, 3]
 
-      iex> EthereumApi.Types.Quantity.from_term!(%{key: "value"})
+      iex> EthereumApi.Quantity.from_term!(%{key: "value"})
       ** (ArgumentError) Expected a quantity, found %{key: "value"}
   """
   @spec from_term!(any()) :: t()

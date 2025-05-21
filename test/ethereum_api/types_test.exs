@@ -1,19 +1,18 @@
 defmodule EthereumApi.TypesTest do
   use ExUnit.Case, async: true
-  doctest EthereumApi.Types
-  doctest EthereumApi.Types.Wei
-  doctest EthereumApi.Types.Tag
-  doctest EthereumApi.Types.Data
-  doctest EthereumApi.Types.Data8
-  doctest EthereumApi.Types.Data20
-  doctest EthereumApi.Types.Data32
-  doctest EthereumApi.Types.Data256
-  doctest EthereumApi.Types.Syncing
-  doctest EthereumApi.Types.Quantity
-  doctest EthereumApi.Types.Block
-  doctest EthereumApi.Types.TransactionEnum
-  doctest EthereumApi.Types.Transaction
-  doctest EthereumApi.Types.Log
-  doctest EthereumApi.Types.TransactionReceipt
-  doctest EthereumApi.Types.TransactionReceipt.Status
+  doctest EthereumApi.Wei
+  doctest EthereumApi.Tag
+  doctest EthereumApi.Data
+  doctest EthereumApi.Data8
+  doctest EthereumApi.Data20
+  doctest EthereumApi.Data32
+  doctest EthereumApi.Data256
+  doctest EthereumApi.Syncing
+  doctest EthereumApi.Quantity
+  doctest EthereumApi.Block
+  doctest EthereumApi.TransactionEnum
+  doctest EthereumApi.Transaction
+  doctest EthereumApi.Log
+  doctest EthereumApi.TransactionReceipt
+  doctest EthereumApi.TransactionReceipt.Status
 end

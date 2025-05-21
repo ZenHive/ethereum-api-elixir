@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Wei do
+defmodule EthereumApi.Wei do
   @moduledoc """
   Represents Wei, the smallest unit of Ether.
   """
@@ -11,26 +11,26 @@ defmodule EthereumApi.Types.Wei do
 
   ## Examples
 
-      iex> EthereumApi.Types.Wei.from_term("0x1234")
+      iex> EthereumApi.Wei.from_term("0x1234")
       {:ok, "0x1234"}
 
-      iex> EthereumApi.Types.Wei.from_term("1234")
+      iex> EthereumApi.Wei.from_term("1234")
       {:error, "Invalid quantity: \\"1234\\""}
 
-      iex> EthereumApi.Types.Wei.from_term(1234)
+      iex> EthereumApi.Wei.from_term(1234)
       {:error, "Invalid quantity: 1234"}
 
-      iex> EthereumApi.Types.Wei.from_term(:atom)
+      iex> EthereumApi.Wei.from_term(:atom)
       {:error, "Invalid quantity: :atom"}
 
-      iex> EthereumApi.Types.Wei.from_term([1, 2, 3])
+      iex> EthereumApi.Wei.from_term([1, 2, 3])
       {:error, "Invalid quantity: [1, 2, 3]"}
 
-      iex> EthereumApi.Types.Wei.from_term(%{key: "value"})
+      iex> EthereumApi.Wei.from_term(%{key: "value"})
       {:error, "Invalid quantity: %{key: \\"value\\"}"}
   """
   @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
-  def from_term(value), do: EthereumApi.Types.Quantity.from_term(value)
+  def from_term(value), do: EthereumApi.Quantity.from_term(value)
 
   @doc """
   Converts a term to Wei format.
@@ -39,41 +39,41 @@ defmodule EthereumApi.Types.Wei do
 
   ## Examples
 
-      iex> EthereumApi.Types.Wei.from_term!("0x1234")
+      iex> EthereumApi.Wei.from_term!("0x1234")
       "0x1234"
 
-      iex> EthereumApi.Types.Wei.from_term!("1234")
+      iex> EthereumApi.Wei.from_term!("1234")
       ** (ArgumentError) Expected a quantity, found "1234"
 
-      iex> EthereumApi.Types.Wei.from_term!(1234)
+      iex> EthereumApi.Wei.from_term!(1234)
       ** (ArgumentError) Expected a quantity, found 1234
 
-      iex> EthereumApi.Types.Wei.from_term!(:atom)
+      iex> EthereumApi.Wei.from_term!(:atom)
       ** (ArgumentError) Expected a quantity, found :atom
 
-      iex> EthereumApi.Types.Wei.from_term!([1, 2, 3])
+      iex> EthereumApi.Wei.from_term!([1, 2, 3])
       ** (ArgumentError) Expected a quantity, found [1, 2, 3]
 
-      iex> EthereumApi.Types.Wei.from_term!(%{key: "value"})
+      iex> EthereumApi.Wei.from_term!(%{key: "value"})
       ** (ArgumentError) Expected a quantity, found %{key: "value"}
   """
   @spec from_term!(any()) :: t()
-  def from_term!(value), do: EthereumApi.Types.Quantity.from_term!(value)
+  def from_term!(value), do: EthereumApi.Quantity.from_term!(value)
 
   @doc """
   Checks if a value is a valid Wei amount.
 
   ## Examples
 
-      iex> EthereumApi.Types.Wei.is_wei?("0x1234")
+      iex> EthereumApi.Wei.is_wei?("0x1234")
       true
 
-      iex> EthereumApi.Types.Wei.is_wei?("1234")
+      iex> EthereumApi.Wei.is_wei?("1234")
       false
 
-      iex> EthereumApi.Types.Wei.is_wei?(1234)
+      iex> EthereumApi.Wei.is_wei?(1234)
       false
   """
   @spec is_wei?(any()) :: boolean()
-  def is_wei?(value), do: EthereumApi.Types.Quantity.is_quantity?(value)
+  def is_wei?(value), do: EthereumApi.Quantity.is_quantity?(value)
 end

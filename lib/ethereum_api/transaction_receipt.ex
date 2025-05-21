@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.TransactionReceipt do
+defmodule EthereumApi.TransactionReceipt do
   @moduledoc """
   Represents the receipt of an executed transaction.
   """
@@ -6,7 +6,7 @@ defmodule EthereumApi.Types.TransactionReceipt do
     @moduledoc """
     Represents the status of a transaction execution.
     """
-    @type t :: :success | :failure | {:pre_byzantium, EthereumApi.Types.Data32.t()}
+    @type t :: :success | :failure | {:pre_byzantium, EthereumApi.Data32.t()}
 
     @doc """
     Converts a term to TransactionStatus format.
@@ -15,28 +15,28 @@ defmodule EthereumApi.Types.TransactionReceipt do
 
     ## Examples
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term("0x1")
+        iex> EthereumApi.TransactionReceipt.Status.from_term("0x1")
         {:ok, :success}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term("0x0")
+        iex> EthereumApi.TransactionReceipt.Status.from_term("0x0")
         {:ok, :failure}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term("0x0000000000000000000000000000000000000000000000000000000000000000")
+        iex> EthereumApi.TransactionReceipt.Status.from_term("0x0000000000000000000000000000000000000000000000000000000000000000")
         {:ok, {:pre_byzantium, "0x0000000000000000000000000000000000000000000000000000000000000000"}}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term("invalid")
+        iex> EthereumApi.TransactionReceipt.Status.from_term("invalid")
         {:error, "Invalid TransactionStatus: \\"invalid\\""}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term(123)
+        iex> EthereumApi.TransactionReceipt.Status.from_term(123)
         {:error, "Invalid TransactionStatus: 123"}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term(:atom)
+        iex> EthereumApi.TransactionReceipt.Status.from_term(:atom)
         {:error, "Invalid TransactionStatus: :atom"}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term([1, 2, 3])
+        iex> EthereumApi.TransactionReceipt.Status.from_term([1, 2, 3])
         {:error, "Invalid TransactionStatus: [1, 2, 3]"}
 
-        iex> EthereumApi.Types.TransactionReceipt.Status.from_term(%{key: "value"})
+        iex> EthereumApi.TransactionReceipt.Status.from_term(%{key: "value"})
         {:error, "Invalid TransactionStatus: %{key: \\"value\\"}"}
     """
     @spec from_term(String.t()) :: {:ok, t()} | {:error, String.t()}
@@ -49,7 +49,7 @@ defmodule EthereumApi.Types.TransactionReceipt do
           {:ok, :failure}
 
         root ->
-          case EthereumApi.Types.Data32.from_term(root) do
+          case EthereumApi.Data32.from_term(root) do
             {:ok, data} -> {:ok, {:pre_byzantium, data}}
             {:error, _reason} -> {:error, "Invalid TransactionStatus: #{inspect(status)}"}
           end
@@ -60,47 +60,47 @@ defmodule EthereumApi.Types.TransactionReceipt do
   use Struct, {
     [Struct.FromTerm],
     transaction_hash: [
-      type: EthereumApi.Types.Data32,
+      type: EthereumApi.Data32,
       "Struct.FromTerm": [keys: "transactionHash"]
     ],
     transaction_index: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "transactionIndex"]
     ],
     block_hash: [
-      type: EthereumApi.Types.Data32,
+      type: EthereumApi.Data32,
       "Struct.FromTerm": [keys: "blockHash"]
     ],
     block_number: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "blockNumber"]
     ],
-    from: EthereumApi.Types.Data20,
-    to: {:option, EthereumApi.Types.Data20},
+    from: EthereumApi.Data20,
+    to: {:option, EthereumApi.Data20},
     cumulative_gas_used: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "cumulativeGasUsed"]
     ],
     effective_gas_price: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "effectiveGasPrice"]
     ],
     gas_used: [
-      type: EthereumApi.Types.Quantity,
+      type: EthereumApi.Quantity,
       "Struct.FromTerm": [keys: "gasUsed"]
     ],
     contract_address: [
-      type: {:option, EthereumApi.Types.Data20},
+      type: {:option, EthereumApi.Data20},
       "Struct.FromTerm": [keys: "contractAddress"]
     ],
-    logs: {:list, EthereumApi.Types.Log},
+    logs: {:list, EthereumApi.Log},
     logs_bloom: [
-      type: EthereumApi.Types.Data256,
+      type: EthereumApi.Data256,
       "Struct.FromTerm": [keys: "logsBloom"]
     ],
-    type: EthereumApi.Types.Quantity,
+    type: EthereumApi.Quantity,
     status: [
-      type: EthereumApi.Types.TransactionReceipt.Status,
+      type: EthereumApi.TransactionReceipt.Status,
       "Struct.FromTerm": [keys: ["status", "root"]]
     ]
   }

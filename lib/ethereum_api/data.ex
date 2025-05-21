@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Data do
+defmodule EthereumApi.Data do
   @moduledoc """
   Represents arbitrary data in Ethereum. (Represented as a hexadecimal string prefixed with "0x")
   """
@@ -11,34 +11,34 @@ defmodule EthereumApi.Types.Data do
 
   ## Examples
 
-      iex> EthereumApi.Types.Data.from_term("0xfffabc")
+      iex> EthereumApi.Data.from_term("0xfffabc")
       {:ok, "0xfffabc"}
 
-      iex> EthereumApi.Types.Data.from_term("string")
+      iex> EthereumApi.Data.from_term("string")
       {:error, "Invalid data: \\"string\\""}
 
-      iex> EthereumApi.Types.Data.from_term("0x1234")
+      iex> EthereumApi.Data.from_term("0x1234")
       {:ok, "0x1234"}
 
-      iex> EthereumApi.Types.Data.from_term("1234")
+      iex> EthereumApi.Data.from_term("1234")
       {:error, "Invalid data: \\"1234\\""}
 
-      iex> EthereumApi.Types.Data.from_term("0x")
+      iex> EthereumApi.Data.from_term("0x")
       {:ok, "0x"}
 
-      iex> EthereumApi.Types.Data.from_term("")
+      iex> EthereumApi.Data.from_term("")
       {:error, "Invalid data: \\"\\""}
 
-      iex> EthereumApi.Types.Data.from_term(123)
+      iex> EthereumApi.Data.from_term(123)
       {:error, "Invalid data: 123"}
 
-      iex> EthereumApi.Types.Data.from_term(:atom)
+      iex> EthereumApi.Data.from_term(:atom)
       {:error, "Invalid data: :atom"}
 
-      iex> EthereumApi.Types.Data.from_term([1, 2, 3])
+      iex> EthereumApi.Data.from_term([1, 2, 3])
       {:error, "Invalid data: [1, 2, 3]"}
 
-      iex> EthereumApi.Types.Data.from_term(%{key: "value"})
+      iex> EthereumApi.Data.from_term(%{key: "value"})
       {:error, "Invalid data: %{key: \\"value\\"}"}
   """
   @spec from_term(any()) :: {:ok, t()} | {:error, String.t()}
@@ -60,25 +60,25 @@ defmodule EthereumApi.Types.Data do
 
   ## Examples
 
-      iex> EthereumApi.Types.Data.is_data?("0xfffabc")
+      iex> EthereumApi.Data.is_data?("0xfffabc")
       true
 
-      iex> EthereumApi.Types.Data.is_data?("string")
+      iex> EthereumApi.Data.is_data?("string")
       false
 
-      iex> EthereumApi.Types.Data.is_data?("0x1234")
+      iex> EthereumApi.Data.is_data?("0x1234")
       true
 
-      iex> EthereumApi.Types.Data.is_data?("1234")
+      iex> EthereumApi.Data.is_data?("1234")
       false
 
-      iex> EthereumApi.Types.Data.is_data?("0x")
+      iex> EthereumApi.Data.is_data?("0x")
       true
 
-      iex> EthereumApi.Types.Data.is_data?("")
+      iex> EthereumApi.Data.is_data?("")
       false
 
-      iex> EthereumApi.Types.Data.is_data?(123)
+      iex> EthereumApi.Data.is_data?(123)
       false
   """
   @spec is_data?(any()) :: boolean()
@@ -95,34 +95,34 @@ defmodule EthereumApi.Types.Data do
 
   ## Examples
 
-      iex> EthereumApi.Types.Data.from_term!("0xfffabc")
+      iex> EthereumApi.Data.from_term!("0xfffabc")
       "0xfffabc"
 
-      iex> EthereumApi.Types.Data.from_term!("string")
+      iex> EthereumApi.Data.from_term!("string")
       ** (ArgumentError) Expected a Data, found "string"
 
-      iex> EthereumApi.Types.Data.from_term!("0x1234")
+      iex> EthereumApi.Data.from_term!("0x1234")
       "0x1234"
 
-      iex> EthereumApi.Types.Data.from_term!("1234")
+      iex> EthereumApi.Data.from_term!("1234")
       ** (ArgumentError) Expected a Data, found "1234"
 
-      iex> EthereumApi.Types.Data.from_term!("0x")
+      iex> EthereumApi.Data.from_term!("0x")
       "0x"
 
-      iex> EthereumApi.Types.Data.from_term!("")
+      iex> EthereumApi.Data.from_term!("")
       ** (ArgumentError) Expected a Data, found ""
 
-      iex> EthereumApi.Types.Data.from_term!(123)
+      iex> EthereumApi.Data.from_term!(123)
       ** (ArgumentError) Expected a Data, found 123
 
-      iex> EthereumApi.Types.Data.from_term!(:atom)
+      iex> EthereumApi.Data.from_term!(:atom)
       ** (ArgumentError) Expected a Data, found :atom
 
-      iex> EthereumApi.Types.Data.from_term!([1, 2, 3])
+      iex> EthereumApi.Data.from_term!([1, 2, 3])
       ** (ArgumentError) Expected a Data, found [1, 2, 3]
 
-      iex> EthereumApi.Types.Data.from_term!(%{key: "value"})
+      iex> EthereumApi.Data.from_term!(%{key: "value"})
       ** (ArgumentError) Expected a Data, found %{key: "value"}
   """
   @spec from_term!(any()) :: t()

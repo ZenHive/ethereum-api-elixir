@@ -1,4 +1,4 @@
-defmodule EthereumApi.Types.Support do
+defmodule EthereumApi.Support do
   @moduledoc false
 
   defmacro def_data_module(size, debug \\ false) do
@@ -37,7 +37,7 @@ defmodule EthereumApi.Types.Support do
 
           def is_data?(value) when is_binary(value) do
             if String.length(value) == unquote(expected_string_len) do
-              EthereumApi.Types.Data.is_data?(value)
+              EthereumApi.Data.is_data?(value)
             else
               false
             end
