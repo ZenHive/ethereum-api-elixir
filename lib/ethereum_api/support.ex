@@ -66,7 +66,10 @@ defmodule EthereumApi.Support do
                   {:halt, {:error, "Expected a list of Data#{unquote(size)}"}}
               end
             end)
-            |> Result.map(&Enum.reverse/1)
+            |> case do
+              {:ok, acc} -> {:ok, Enum.reverse(acc)}
+              {:error, reason} -> {:error, reason}
+            end
           end
 
           def from_term_list(_), do: {:error, "Expected a list of Data#{unquote(size)}"}

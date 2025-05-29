@@ -976,19 +976,13 @@ defmodule EthereumApi do
 
       [first | _] = list ->
         if is_map(first) do
-          Result.try_reduce(list, [], fn elem, acc ->
-            EthereumApi.Log.from_term(elem)
-            |> Result.map(&[&1 | acc])
-          end)
+          try_reduce_log_list(list, [])
           |> case do
             {:error, reason} -> {:error, reason}
             {:ok, logs} -> {:ok, {:log, Enum.reverse(logs)}}
           end
         else
-          Result.try_reduce(list, [], fn elem, acc ->
-            EthereumApi.Data32.from_term(elem)
-            |> Result.map(&[&1 | acc])
-          end)
+          try_reduce_hash_list(list, [])
           |> case do
             {:error, reason} -> {:error, reason}
             {:ok, hashes} -> {:ok, {:hash, Enum.reverse(hashes)}}
@@ -1000,12 +994,38 @@ defmodule EthereumApi do
     end
   end
 
-  defp quantity_or_tag_from_term!(value) do
-    EthereumApi.Quantity.from_term(value)
-    |> Result.unwrap_or_else(fn _err ->
-      EthereumApi.Tag.from_term(value)
-      |> Result.expect!("Expected a quantity or tag, found #{inspect(value)}")
+  defp try_reduce_log_list(list, acc) do
+    Enum.reduce_while(list, {:ok, acc}, fn elem, {:ok, acc} ->
+      case EthereumApi.Log.from_term(elem) do
+        {:ok, log} -> {:cont, {:ok, [log | acc]}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
     end)
+  end
+
+  defp try_reduce_hash_list(list, acc) do
+    Enum.reduce_while(list, {:ok, acc}, fn elem, {:ok, acc} ->
+      case EthereumApi.Data32.from_term(elem) do
+        {:ok, hash} -> {:cont, {:ok, [hash | acc]}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+  end
+
+  defp quantity_or_tag_from_term!(value) do
+    case EthereumApi.Quantity.from_term(value) do
+      {:ok, quantity} ->
+        quantity
+
+      {:error, _} ->
+        case EthereumApi.Tag.from_term(value) do
+          {:ok, tag} ->
+            tag
+
+          {:error, _} ->
+            raise ArgumentError, "Expected a quantity or tag, found #{inspect(value)}"
+        end
+    end
   end
 
   @spec parse_boolean_response(any) :: {:ok, boolean()} | {:error, String.t()}
