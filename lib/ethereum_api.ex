@@ -6,17 +6,12 @@ defmodule EthereumApi do
   EthereumApi.Support.def_data_module(32)
   EthereumApi.Support.def_data_module(256)
 
-  @spec start_link(JsonRpc.Client.WebSocket.conn_info(), [JsonRpc.Client.WebSocket.option()]) ::
-          {:ok, pid()} | {:error, term()}
-  def start_link(url, opts \\ []) do
-    JsonRpc.Client.WebSocket.start_link(url, opts)
-  end
-
   use JsonRpc.ApiCreator, [
     %{
       method: "web3_clientVersion",
       doc: "Returns the current client version.",
       response_type: String.t(),
+      parsing_error_type: String.t(),
       response_parser: &parse_string_response/1
     },
     %{
@@ -30,24 +25,28 @@ defmodule EthereumApi do
       args: {data, EthereumApi.Data.t()},
       args_transformer!: &EthereumApi.Data.from_term!/1,
       response_type: String.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
       method: "net_version",
       doc: "Returns the current network id.",
       response_type: String.t(),
+      parsing_error_type: String.t(),
       response_parser: &parse_string_response/1
     },
     %{
       method: "net_listening",
       doc: "Returns true if client is actively listening for network connections.",
       response_type: boolean(),
+      parsing_error_type: String.t(),
       response_parser: &parse_boolean_response/1
     },
     %{
       method: "net_peerCount",
       doc: "Returns number of peers currently connected to the client.",
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -59,12 +58,14 @@ defmodule EthereumApi do
         (see https://github.com/ethereum/go-ethereum/pull/22064#issuecomment-788682924).
       """,
       response_type: String.t(),
+      parsing_error_type: String.t(),
       response_parser: &parse_string_response/1
     },
     %{
       method: "eth_syncing",
       doc: "Returns an object with data about the sync status or false.",
       response_type: false | EthereumApi.Syncing.t(),
+      parsing_error_type: String.t(),
       response_parser: fn
         false -> {:ok, false}
         response -> EthereumApi.Syncing.from_term(response)
@@ -74,6 +75,7 @@ defmodule EthereumApi do
       method: "eth_chainId",
       doc: "Returns the chain ID used for signing replay-protected transactions.",
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -84,6 +86,7 @@ defmodule EthereumApi do
         clients since The Merge.
       """,
       response_type: boolean(),
+      parsing_error_type: String.t(),
       response_parser: &parse_boolean_response/1
     },
     %{
@@ -94,6 +97,7 @@ defmodule EthereumApi do
         clients since The Merge.
       """,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -104,12 +108,14 @@ defmodule EthereumApi do
         price by default.
       """,
       response_type: EthereumApi.Wei.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Wei.from_term/1
     },
     %{
       method: "eth_accounts",
       doc: "Returns a list of addresses owned by client.",
       response_type: [EthereumApi.Data20.t()],
+      parsing_error_type: String.t(),
       response_parser: fn
         list when is_list(list) ->
           result =
@@ -135,6 +141,7 @@ defmodule EthereumApi do
       method: "eth_blockNumber",
       doc: "Returns the number of the most recent block.",
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -158,6 +165,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Wei.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Wei.from_term/1
     },
     %{
@@ -186,6 +194,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -209,6 +218,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -222,6 +232,7 @@ defmodule EthereumApi do
       args: {block_hash, EthereumApi.Data32.t()},
       args_transformer!: &EthereumApi.Data32.from_term!/1,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -236,6 +247,7 @@ defmodule EthereumApi do
       args: {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
       args_transformer!: &quantity_or_tag_from_term!/1,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -249,6 +261,7 @@ defmodule EthereumApi do
       args: {block_hash, EthereumApi.Data32.t()},
       args_transformer!: &EthereumApi.Data32.from_term!/1,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -263,6 +276,7 @@ defmodule EthereumApi do
       args: {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
       args_transformer!: &quantity_or_tag_from_term!/1,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -286,6 +300,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -315,6 +330,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -361,6 +377,7 @@ defmodule EthereumApi do
         )
       end,
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -409,6 +426,7 @@ defmodule EthereumApi do
         )
       end,
       response_type: EthereumApi.Data32.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data32.from_term/1
     },
     %{
@@ -427,6 +445,7 @@ defmodule EthereumApi do
       args: {signed_transaction_data, EthereumApi.Data.t()},
       args_transformer!: &EthereumApi.Data.from_term!/1,
       response_type: EthereumApi.Data32.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data32.from_term/1
     },
     %{
@@ -474,6 +493,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: EthereumApi.Data.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Data.from_term/1
     },
     %{
@@ -522,6 +542,7 @@ defmodule EthereumApi do
         end
       end,
       response_type: EthereumApi.Wei.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Wei.from_term/1
     },
     %{
@@ -548,6 +569,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Block.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Block.from_term_optional/1
     },
     %{
@@ -575,6 +597,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Block.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Block.from_term_optional/1
     },
     %{
@@ -588,6 +611,7 @@ defmodule EthereumApi do
       args: {transaction_hash, EthereumApi.Data32.t()},
       args_transformer!: &EthereumApi.Data32.from_term!/1,
       response_type: nil | EthereumApi.Transaction.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Transaction.from_term_optional/1
     },
     %{
@@ -610,6 +634,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Transaction.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Transaction.from_term_optional/1
     },
     %{
@@ -633,6 +658,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Transaction.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Transaction.from_term_optional/1
     },
     %{
@@ -651,6 +677,7 @@ defmodule EthereumApi do
       args: {transaction_hash, EthereumApi.Data32.t()},
       args_transformer!: &EthereumApi.Data32.from_term!/1,
       response_type: nil | EthereumApi.TransactionReceipt.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.TransactionReceipt.from_term_optional/1
     },
     %{
@@ -676,7 +703,8 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Block.t(),
-      response_parser: &(IO.inspect(&1) |> EthereumApi.Block.from_term_optional())
+      parsing_error_type: String.t(),
+      response_parser: &EthereumApi.Block.from_term_optional/1
     },
     %{
       method: "eth_getUncleByBlockNumberAndIndex",
@@ -702,6 +730,7 @@ defmodule EthereumApi do
         ]
       end,
       response_type: nil | EthereumApi.Block.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Block.from_term_optional/1
     },
     %{
@@ -740,6 +769,7 @@ defmodule EthereumApi do
          ]},
       args_transformer!: &create_filter_options_object!(&1, false),
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -752,6 +782,7 @@ defmodule EthereumApi do
         - Quantity - A filter id
       """,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -764,6 +795,7 @@ defmodule EthereumApi do
         - Quantity - A filter id
       """,
       response_type: EthereumApi.Quantity.t(),
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Quantity.from_term/1
     },
     %{
@@ -779,6 +811,7 @@ defmodule EthereumApi do
         - Boolean - true if the filter was successfully uninstalled, otherwise false
       """,
       args: {filter_id, EthereumApi.Quantity.t()},
+      parsing_error_type: String.t(),
       args_transformer!: &EthereumApi.Quantity.from_term!/1,
       response_type: boolean(),
       response_parser: &parse_boolean_response/1
@@ -804,6 +837,7 @@ defmodule EthereumApi do
         nil
         | {:log, [EthereumApi.Log.t()]}
         | {:hash, [EthereumApi.Data32.t()]},
+      parsing_error_type: String.t(),
       response_parser: &parse_filer_result/1
     },
     %{
@@ -820,6 +854,7 @@ defmodule EthereumApi do
       args: {filter_id, EthereumApi.Quantity.t()},
       args_transformer!: &EthereumApi.Quantity.from_term!/1,
       response_type: [EthereumApi.Log.t()],
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Log.from_term_list/1
     },
     %{
@@ -859,6 +894,7 @@ defmodule EthereumApi do
          ]},
       args_transformer!: &create_filter_options_object!(&1, true),
       response_type: [EthereumApi.Log.t()],
+      parsing_error_type: String.t(),
       response_parser: &EthereumApi.Log.from_term_list/1
     }
   ]
