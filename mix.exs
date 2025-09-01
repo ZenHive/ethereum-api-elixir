@@ -30,7 +30,8 @@ defmodule EthereumApi.MixProject do
       {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:struct, git: "https://github.com/ZenHive/struct_elixir.git", tag: "v0.2.1"},
-      {:json_rpc, git: "https://github.com/ZenHive/json_rpc_elixir.git", tag: "v0.8.0"}
+      # TODO Don't use spark branch
+      {:json_rpc, git: "https://github.com/ZenHive/json_rpc_elixir.git", branch: "spark"}
     ]
   end
 end
