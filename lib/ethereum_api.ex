@@ -1,4 +1,6 @@
 defmodule EthereumApi do
+  use JsonRpc.ApiCreator
+
   require EthereumApi.Support
 
   EthereumApi.Support.def_data_module(8)
@@ -6,117 +8,123 @@ defmodule EthereumApi do
   EthereumApi.Support.def_data_module(32)
   EthereumApi.Support.def_data_module(256)
 
-  use JsonRpc.ApiCreator, [
-    %{
-      method: "web3_clientVersion",
-      doc: "Returns the current client version.",
-      response_type: String.t(),
-      parsing_error_type: String.t(),
-      response_parser: &parse_string_response/1
-    },
-    %{
-      method: "web3_sha3",
-      doc: """
+  methods do
+    method "web3_clientVersion" do
+      doc "Returns the current client version."
+      response_type String.t()
+      parsing_error_type String.t()
+      response_parser &parse_string_response/1
+    end
+
+    method "web3_sha3" do
+      doc """
         Returns Keccak-256 (not the standardized SHA3-256) of the given data.
 
         # Parameters
         - data: The data to convert into a SHA3 hash
-      """,
-      args: {data, EthereumApi.Data.t()},
-      args_transformer!: &EthereumApi.Data.from_term!/1,
-      response_type: String.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "net_version",
-      doc: "Returns the current network id.",
-      response_type: String.t(),
-      parsing_error_type: String.t(),
-      response_parser: &parse_string_response/1
-    },
-    %{
-      method: "net_listening",
-      doc: "Returns true if client is actively listening for network connections.",
-      response_type: boolean(),
-      parsing_error_type: String.t(),
-      response_parser: &parse_boolean_response/1
-    },
-    %{
-      method: "net_peerCount",
-      doc: "Returns number of peers currently connected to the client.",
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_protocolVersion",
-      doc: """
+      """
+
+      args {data, EthereumApi.Data.t()}
+      args_transformer! &EthereumApi.Data.from_term!/1
+      response_type String.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "net_version" do
+      doc "Returns the current network id."
+      response_type String.t()
+      parsing_error_type String.t()
+      response_parser &parse_string_response/1
+    end
+
+    method "net_listening" do
+      doc "Returns true if client is actively listening for network connections."
+      response_type boolean()
+      parsing_error_type String.t()
+      response_parser &parse_boolean_response/1
+    end
+
+    method "net_peerCount" do
+      doc "Returns number of peers currently connected to the client."
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_protocolVersion" do
+      doc """
         Returns the current Ethereum protocol version.
 
         Note that this method is not available in Geth
         (see https://github.com/ethereum/go-ethereum/pull/22064#issuecomment-788682924).
-      """,
-      response_type: String.t(),
-      parsing_error_type: String.t(),
-      response_parser: &parse_string_response/1
-    },
-    %{
-      method: "eth_syncing",
-      doc: "Returns an object with data about the sync status or false.",
-      response_type: false | EthereumApi.Syncing.t(),
-      parsing_error_type: String.t(),
-      response_parser: fn
+      """
+
+      response_type String.t()
+      parsing_error_type String.t()
+      response_parser &parse_string_response/1
+    end
+
+    method "eth_syncing" do
+      doc "Returns an object with data about the sync status or false."
+      response_type false | EthereumApi.Syncing.t()
+      parsing_error_type String.t()
+
+      response_parser fn
         false -> {:ok, false}
         response -> EthereumApi.Syncing.from_term(response)
       end
-    },
-    %{
-      method: "eth_chainId",
-      doc: "Returns the chain ID used for signing replay-protected transactions.",
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_mining",
-      doc: """
+    end
+
+    method "eth_chainId" do
+      doc "Returns the chain ID used for signing replay-protected transactions."
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_mining" do
+      doc """
         Returns true if client is actively mining new blocks.
         This can only return true for proof-of-work networks and may not be available in some
         clients since The Merge.
-      """,
-      response_type: boolean(),
-      parsing_error_type: String.t(),
-      response_parser: &parse_boolean_response/1
-    },
-    %{
-      method: "eth_hashrate",
-      doc: """
+      """
+
+      response_type boolean()
+      parsing_error_type String.t()
+      response_parser &parse_boolean_response/1
+    end
+
+    method "eth_hashrate" do
+      doc """
         Returns the number of hashes per second that the node is mining with.
         This can only return true for proof-of-work networks and may not be available in some
         clients since The Merge.
-      """,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_gasPrice",
-      doc: """
+      """
+
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_gasPrice" do
+      doc """
         Returns an estimate of the current price per gas in wei.
         For example, the Besu client examines the last 100 blocks and returns the median gas unit
         price by default.
-      """,
-      response_type: EthereumApi.Wei.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Wei.from_term/1
-    },
-    %{
-      method: "eth_accounts",
-      doc: "Returns a list of addresses owned by client.",
-      response_type: [EthereumApi.Data20.t()],
-      parsing_error_type: String.t(),
-      response_parser: fn
+      """
+
+      response_type EthereumApi.Wei.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Wei.from_term/1
+    end
+
+    method "eth_accounts" do
+      doc "Returns a list of addresses owned by client."
+      response_type [EthereumApi.Data20.t()]
+      parsing_error_type String.t()
+
+      response_parser fn
         list when is_list(list) ->
           result =
             Enum.reduce_while(list, {:ok, []}, fn elem, acc ->
@@ -136,41 +144,44 @@ defmodule EthereumApi do
           {:error,
            "Invalid response, expect list(EthereumApi.Data20.t()) found #{inspect(response)}"}
       end
-    },
-    %{
-      method: "eth_blockNumber",
-      doc: "Returns the number of the most recent block.",
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getBalance",
-      doc: """
+    end
+
+    method "eth_blockNumber" do
+      doc "Returns the number of the most recent block."
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getBalance" do
+      doc """
         Returns the balance of the account of given address.
 
         # Parameters
         - address: The address to check for balance
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: [
+      """
+
+      args [
         {address, EthereumApi.Data20.t()},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
-      ],
-      args_transformer!: fn address, block_number_or_tag ->
+      ]
+
+      args_transformer! fn address, block_number_or_tag ->
         [
           EthereumApi.Data20.from_term!(address),
           quantity_or_tag_from_term!(block_number_or_tag)
         ]
-      end,
-      response_type: EthereumApi.Wei.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Wei.from_term/1
-    },
-    %{
-      method: "eth_getStorageAt",
-      doc: """
+      end
+
+      response_type EthereumApi.Wei.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Wei.from_term/1
+    end
+
+    method "eth_getStorageAt" do
+      doc """
         Returns the value from a storage position at a given address.
         For more details, see:
         https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat
@@ -180,132 +191,145 @@ defmodule EthereumApi do
         - position: Integer of the position in the storage
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: [
+      """
+
+      args [
         {address, EthereumApi.Data20.t()},
         {position, EthereumApi.Quantity.t()},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
-      ],
-      args_transformer!: fn address, position, block_number_or_tag ->
+      ]
+
+      args_transformer! fn address, position, block_number_or_tag ->
         [
           EthereumApi.Data20.from_term!(address),
           EthereumApi.Quantity.from_term!(position),
           quantity_or_tag_from_term!(block_number_or_tag)
         ]
-      end,
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_getTransactionCount",
-      doc: """
+      end
+
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_getTransactionCount" do
+      doc """
         Returns the number of transactions sent from an address.
 
         # Parameters
         - address: The address to check for transaction count
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: [
+      """
+
+      args [
         {address, EthereumApi.Data20.t()},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
-      ],
-      args_transformer!: fn address, block_number_or_tag ->
+      ]
+
+      args_transformer! fn address, block_number_or_tag ->
         [
           EthereumApi.Data20.from_term!(address),
           quantity_or_tag_from_term!(block_number_or_tag)
         ]
-      end,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getBlockTransactionCountByHash",
-      doc: """
+      end
+
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getBlockTransactionCountByHash" do
+      doc """
         Returns the number of transactions in a block from a block matching the given block hash.
 
         # Parameters
         - block_hash: The block hash
-      """,
-      args: {block_hash, EthereumApi.Data32.t()},
-      args_transformer!: &EthereumApi.Data32.from_term!/1,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getBlockTransactionCountByNumber",
-      doc: """
+      """
+
+      args {block_hash, EthereumApi.Data32.t()}
+      args_transformer! &EthereumApi.Data32.from_term!/1
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getBlockTransactionCountByNumber" do
+      doc """
         Returns the number of transactions in a block matching the given block number.
 
         # Parameters
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-      args_transformer!: &quantity_or_tag_from_term!/1,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getUncleCountByBlockHash",
-      doc: """
+      """
+
+      args {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
+      args_transformer! &quantity_or_tag_from_term!/1
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getUncleCountByBlockHash" do
+      doc """
         Returns the number of uncles in a block from a block matching the given block hash.
 
         # Parameters
         - block_hash: The block hash
-      """,
-      args: {block_hash, EthereumApi.Data32.t()},
-      args_transformer!: &EthereumApi.Data32.from_term!/1,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getUncleCountByBlockNumber",
-      doc: """
+      """
+
+      args {block_hash, EthereumApi.Data32.t()}
+      args_transformer! &EthereumApi.Data32.from_term!/1
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getUncleCountByBlockNumber" do
+      doc """
         Returns the number of uncles in a block from a block matching the given block number.
 
         # Parameters
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-      args_transformer!: &quantity_or_tag_from_term!/1,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_getCode",
-      doc: """
+      """
+
+      args {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
+      args_transformer! &quantity_or_tag_from_term!/1
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_getCode" do
+      doc """
         Returns code at a given address.
 
         # Parameters
         - address: The address to check for code
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
-      """,
-      args: [
+      """
+
+      args [
         {address, EthereumApi.Data20.t()},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
-      ],
-      args_transformer!: fn address, block_number_or_tag ->
+      ]
+
+      args_transformer! fn address, block_number_or_tag ->
         [
           EthereumApi.Data20.from_term!(address),
           quantity_or_tag_from_term!(block_number_or_tag)
         ]
-      end,
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_sign",
-      doc: """
+      end
+
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_sign" do
+      doc """
         The sign method calculates an Ethereum specific signature with:
         sign(keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))).
 
@@ -318,24 +342,27 @@ defmodule EthereumApi do
         # Parameters
         - address: The address to sign with
         - data: The data to sign
-      """,
-      args: [
+      """
+
+      args [
         {address, EthereumApi.Data20.t()},
         {data, EthereumApi.Data.t()}
-      ],
-      args_transformer!: fn address, data ->
+      ]
+
+      args_transformer! fn address, data ->
         [
           EthereumApi.Data20.from_term!(address),
           EthereumApi.Data.from_term!(data)
         ]
-      end,
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_signTransaction",
-      doc: """
+      end
+
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_signTransaction" do
+      doc """
         Signs a transaction that can be submitted to the network at a later time using with
         eth_sendRawTransaction.
 
@@ -354,8 +381,9 @@ defmodule EthereumApi do
 
         # Returns
         - Data - The RLP-encoded transaction object signed by the specified account.
-      """,
-      args: [
+      """
+
+      args [
         {from, EthereumApi.Data20.t()},
         {data, EthereumApi.Data.t()},
         {opts,
@@ -366,8 +394,9 @@ defmodule EthereumApi do
            {:value, EthereumApi.Wei.t()},
            {:nonce, EthereumApi.Quantity.t()}
          ]}
-      ],
-      args_transformer!: fn from, data, opts ->
+      ]
+
+      args_transformer! fn from, data, opts ->
         create_transaction_object!(
           [
             from: EthereumApi.Data20.from_term!(from),
@@ -375,14 +404,15 @@ defmodule EthereumApi do
           ],
           opts
         )
-      end,
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_sendTransaction",
-      doc: """
+      end
+
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_sendTransaction" do
+      doc """
         Creates new message call transaction or a contract creation, if the data field contains
         code, and signs it using the account specified in from.
 
@@ -403,8 +433,9 @@ defmodule EthereumApi do
         - Data32 - the transaction hash, or the zero hash if the transaction is not yet available.
           Use eth_getTransactionReceipt to get the contract address, after the transaction was
           proposed in a block, when you created a contract.
-      """,
-      args: [
+      """
+
+      args [
         {from, EthereumApi.Data20.t()},
         {data, EthereumApi.Data.t()},
         {opts,
@@ -415,8 +446,9 @@ defmodule EthereumApi do
            {:value, EthereumApi.Wei.t()},
            {:nonce, EthereumApi.Quantity.t()}
          ]}
-      ],
-      args_transformer!: fn from, data, opts ->
+      ]
+
+      args_transformer! fn from, data, opts ->
         create_transaction_object!(
           [
             from: EthereumApi.Data20.from_term!(from),
@@ -424,14 +456,15 @@ defmodule EthereumApi do
           ],
           opts
         )
-      end,
-      response_type: EthereumApi.Data32.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data32.from_term/1
-    },
-    %{
-      method: "eth_sendRawTransaction",
-      doc: """
+      end
+
+      response_type EthereumApi.Data32.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data32.from_term/1
+    end
+
+    method "eth_sendRawTransaction" do
+      doc """
         Creates new message call transaction or a contract creation for signed transactions.
 
         # Parameters
@@ -441,16 +474,17 @@ defmodule EthereumApi do
         - Data32 - the transaction hash, or the zero hash if the transaction is not yet available.
           Use eth_getTransactionReceipt to get the contract address, after the transaction was
           proposed in a block, when you created a contract.
-      """,
-      args: {signed_transaction_data, EthereumApi.Data.t()},
-      args_transformer!: &EthereumApi.Data.from_term!/1,
-      response_type: EthereumApi.Data32.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data32.from_term/1
-    },
-    %{
-      method: "eth_call",
-      doc: """
+      """
+
+      args {signed_transaction_data, EthereumApi.Data.t()}
+      args_transformer! &EthereumApi.Data.from_term!/1
+      response_type EthereumApi.Data32.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data32.from_term/1
+    end
+
+    method "eth_call" do
+      doc """
         Executes a new message call immediately without creating a transaction on the blockchain.
         Often used for executing read-only smart contract functions, for example the balanceOf for
         an ERC-20 contract.
@@ -473,8 +507,9 @@ defmodule EthereumApi do
 
         # Returns
         - Data - the return value of the executed contract.
-      """,
-      args: [
+      """
+
+      args [
         {transaction,
          {{:to, EthereumApi.Data20.t()},
           opts :: [
@@ -485,20 +520,22 @@ defmodule EthereumApi do
             {:data, EthereumApi.Data.t()}
           ]}},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()}
-      ],
-      args_transformer!: fn {{:to, to}, opts}, block_number_or_tag ->
+      ]
+
+      args_transformer! fn {{:to, to}, opts}, block_number_or_tag ->
         [
           create_transaction_object!([to: to], opts),
           quantity_or_tag_from_term!(block_number_or_tag)
         ]
-      end,
-      response_type: EthereumApi.Data.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Data.from_term/1
-    },
-    %{
-      method: "eth_estimateGas",
-      doc: """
+      end
+
+      response_type EthereumApi.Data.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Data.from_term/1
+    end
+
+    method "eth_estimateGas" do
+      doc """
         Generates and returns an estimate of how much gas is necessary to allow the transaction
         to complete. The transaction will not be added to the blockchain. Note that the estimate
         may be significantly more than the amount of gas actually used by the transaction, for a
@@ -519,8 +556,9 @@ defmodule EthereumApi do
 
         # Returns
         - Wei - the amount of gas used.
-      """,
-      args: [
+      """
+
+      args [
         {transaction,
          [
            {:to, EthereumApi.Data20.t()},
@@ -531,8 +569,9 @@ defmodule EthereumApi do
            {:data, EthereumApi.Data.t()}
          ]},
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t() | nil}
-      ],
-      args_transformer!: fn transaction, block_number_or_tag ->
+      ]
+
+      args_transformer! fn transaction, block_number_or_tag ->
         transaction = create_transaction_object!([], transaction)
 
         if block_number_or_tag do
@@ -540,25 +579,28 @@ defmodule EthereumApi do
         else
           [transaction]
         end
-      end,
-      response_type: EthereumApi.Wei.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Wei.from_term/1
-    },
-    %{
-      method: "eth_getBlockByHash",
-      doc: """
+      end
+
+      response_type EthereumApi.Wei.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Wei.from_term/1
+    end
+
+    method "eth_getBlockByHash" do
+      doc """
         Returns information about a block by hash.
 
         # Parameters
         - block_hash: The hash of the block to retrieve
         - full_transaction_objects?: If true, returns the full transaction objects, if false only the transaction hashes
-      """,
-      args: [
+      """
+
+      args [
         {block_hash, EthereumApi.Data32.t()},
         {full_transaction_objects?, boolean()}
-      ],
-      args_transformer!: fn block_hash, full_transaction_objects? ->
+      ]
+
+      args_transformer! fn block_hash, full_transaction_objects? ->
         [
           EthereumApi.Data32.from_term!(block_hash),
           if is_boolean(full_transaction_objects?) do
@@ -567,26 +609,29 @@ defmodule EthereumApi do
             raise ArgumentError, "Expected a boolean, got #{inspect(full_transaction_objects?)}"
           end
         ]
-      end,
-      response_type: nil | EthereumApi.Block.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Block.from_term_optional/1
-    },
-    %{
-      method: "eth_getBlockByNumber",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Block.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Block.from_term_optional/1
+    end
+
+    method "eth_getBlockByNumber" do
+      doc """
         Returns information about a block by block number.
 
         # Parameters
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
         - full_transaction_objects?: If true, returns the full transaction objects, if false only the transaction hashes
-      """,
-      args: [
+      """
+
+      args [
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
         {full_transaction_objects?, boolean()}
-      ],
-      args_transformer!: fn block_number_or_tag, full_transaction_objects? ->
+      ]
+
+      args_transformer! fn block_number_or_tag, full_transaction_objects? ->
         [
           quantity_or_tag_from_term!(block_number_or_tag),
           if is_boolean(full_transaction_objects?) do
@@ -595,75 +640,83 @@ defmodule EthereumApi do
             raise ArgumentError, "Expected a boolean, got #{inspect(full_transaction_objects?)}"
           end
         ]
-      end,
-      response_type: nil | EthereumApi.Block.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Block.from_term_optional/1
-    },
-    %{
-      method: "eth_getTransactionByHash",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Block.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Block.from_term_optional/1
+    end
+
+    method "eth_getTransactionByHash" do
+      doc """
         Returns the information about a transaction requested by transaction hash.
 
         # Parameters
         - transaction_hash: Hash of a transaction
-      """,
-      args: {transaction_hash, EthereumApi.Data32.t()},
-      args_transformer!: &EthereumApi.Data32.from_term!/1,
-      response_type: nil | EthereumApi.Transaction.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Transaction.from_term_optional/1
-    },
-    %{
-      method: "eth_getTransactionByBlockHashAndIndex",
-      doc: """
+      """
+
+      args {transaction_hash, EthereumApi.Data32.t()}
+      args_transformer! &EthereumApi.Data32.from_term!/1
+      response_type nil | EthereumApi.Transaction.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Transaction.from_term_optional/1
+    end
+
+    method "eth_getTransactionByBlockHashAndIndex" do
+      doc """
         Returns information about a transaction by block hash and transaction index position.
 
         # Parameters
         - block_hash: Hash of a block
         - transaction_index: Integer of the transaction index position
-      """,
-      args: [
+      """
+
+      args [
         {block_hash, EthereumApi.Data32.t()},
         {transaction_index, EthereumApi.Quantity.t()}
-      ],
-      args_transformer!: fn block_hash, transaction_index ->
+      ]
+
+      args_transformer! fn block_hash, transaction_index ->
         [
           EthereumApi.Data32.from_term!(block_hash),
           EthereumApi.Quantity.from_term!(transaction_index)
         ]
-      end,
-      response_type: nil | EthereumApi.Transaction.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Transaction.from_term_optional/1
-    },
-    %{
-      method: "eth_getTransactionByBlockNumberAndIndex",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Transaction.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Transaction.from_term_optional/1
+    end
+
+    method "eth_getTransactionByBlockNumberAndIndex" do
+      doc """
         Returns information about a transaction by block number and transaction index position.
 
         # Parameters
         - block_number_or_tag: Integer block number, or one of the following strings
           #{inspect(EthereumApi.Tag.tags())}
         - transaction_index: Integer of the transaction index position
-      """,
-      args: [
+      """
+
+      args [
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
         {transaction_index, EthereumApi.Quantity.t()}
-      ],
-      args_transformer!: fn block_number_or_tag, transaction_index ->
+      ]
+
+      args_transformer! fn block_number_or_tag, transaction_index ->
         [
           quantity_or_tag_from_term!(block_number_or_tag),
           EthereumApi.Quantity.from_term!(transaction_index)
         ]
-      end,
-      response_type: nil | EthereumApi.Transaction.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Transaction.from_term_optional/1
-    },
-    %{
-      method: "eth_getTransactionReceipt",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Transaction.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Transaction.from_term_optional/1
+    end
+
+    method "eth_getTransactionReceipt" do
+      doc """
         Returns the receipt of a transaction by transaction hash.
 
         Note that the receipt is not available for pending transactions.
@@ -673,16 +726,17 @@ defmodule EthereumApi do
 
         # Returns
         - nil | TransactionReceipt.t() - A transaction receipt object, or nil when no receipt was found
-      """,
-      args: {transaction_hash, EthereumApi.Data32.t()},
-      args_transformer!: &EthereumApi.Data32.from_term!/1,
-      response_type: nil | EthereumApi.TransactionReceipt.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.TransactionReceipt.from_term_optional/1
-    },
-    %{
-      method: "eth_getUncleByBlockHashAndIndex",
-      doc: """
+      """
+
+      args {transaction_hash, EthereumApi.Data32.t()}
+      args_transformer! &EthereumApi.Data32.from_term!/1
+      response_type nil | EthereumApi.TransactionReceipt.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.TransactionReceipt.from_term_optional/1
+    end
+
+    method "eth_getUncleByBlockHashAndIndex" do
+      doc """
         Returns information about an uncle of a block by hash and uncle index position.
 
         # Parameters
@@ -691,24 +745,27 @@ defmodule EthereumApi do
 
         # Returns
         - nil | Block.t() - An uncle block object, or nil when no uncle was found
-      """,
-      args: [
+      """
+
+      args [
         {block_hash, EthereumApi.Data32.t()},
         {uncle_index, EthereumApi.Quantity.t()}
-      ],
-      args_transformer!: fn block_hash, uncle_index ->
+      ]
+
+      args_transformer! fn block_hash, uncle_index ->
         [
           EthereumApi.Data32.from_term!(block_hash),
           EthereumApi.Quantity.from_term!(uncle_index)
         ]
-      end,
-      response_type: nil | EthereumApi.Block.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Block.from_term_optional/1
-    },
-    %{
-      method: "eth_getUncleByBlockNumberAndIndex",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Block.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Block.from_term_optional/1
+    end
+
+    method "eth_getUncleByBlockNumberAndIndex" do
+      doc """
         Returns information about an uncle of a block by block number and uncle index position.
 
         # Parameters
@@ -718,24 +775,27 @@ defmodule EthereumApi do
 
         # Returns
         - nil | Block.t() - An uncle block object, or nil when no uncle was found
-      """,
-      args: [
+      """
+
+      args [
         {block_number_or_tag, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
         {uncle_index, EthereumApi.Quantity.t()}
-      ],
-      args_transformer!: fn block_number_or_tag, uncle_index ->
+      ]
+
+      args_transformer! fn block_number_or_tag, uncle_index ->
         [
           quantity_or_tag_from_term!(block_number_or_tag),
           EthereumApi.Quantity.from_term!(uncle_index)
         ]
-      end,
-      response_type: nil | EthereumApi.Block.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Block.from_term_optional/1
-    },
-    %{
-      method: "eth_newFilter",
-      doc: """
+      end
+
+      response_type nil | EthereumApi.Block.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Block.from_term_optional/1
+    end
+
+    method "eth_newFilter" do
+      doc """
         Creates a filter object, based on filter options, to notify when the state changes (logs).
         To check if the state has changed, call eth_getFilterChanges.
 
@@ -758,49 +818,52 @@ defmodule EthereumApi do
 
         # Returns
         - Quantity - A filter id
-      """,
-      args:
-        {filter_options,
-         [
-           {:from_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-           {:to_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-           {:address, EthereumApi.Data20.t() | [EthereumApi.Data20.t()]},
-           {:topics, [EthereumApi.Data32.t() | [EthereumApi.Data32.t()]]}
-         ]},
-      args_transformer!: &create_filter_options_object!(&1, false),
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_newBlockFilter",
-      doc: """
+      """
+
+      args {filter_options,
+            [
+              {:from_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
+              {:to_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
+              {:address, EthereumApi.Data20.t() | [EthereumApi.Data20.t()]},
+              {:topics, [EthereumApi.Data32.t() | [EthereumApi.Data32.t()]]}
+            ]}
+
+      args_transformer! &create_filter_options_object!(&1, false)
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_newBlockFilter" do
+      doc """
         Creates a filter in the node, to notify when a new block arrives.
         To check if the state has changed, call eth_getFilterChanges.
 
         # Returns
         - Quantity - A filter id
-      """,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_newPendingTransactionFilter",
-      doc: """
+      """
+
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_newPendingTransactionFilter" do
+      doc """
         Creates a filter in the node, to notify when new pending transactions arrive.
         To check if the state has changed, call eth_getFilterChanges.
 
         # Returns
         - Quantity - A filter id
-      """,
-      response_type: EthereumApi.Quantity.t(),
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Quantity.from_term/1
-    },
-    %{
-      method: "eth_uninstallFilter",
-      doc: """
+      """
+
+      response_type EthereumApi.Quantity.t()
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Quantity.from_term/1
+    end
+
+    method "eth_uninstallFilter" do
+      doc """
         Uninstalls a filter with given id. Should always be called when watch is no longer needed.
         Additionally, filters timeout when they aren't requested with eth_getFilterChanges for a period of time.
 
@@ -809,16 +872,19 @@ defmodule EthereumApi do
 
         # Returns
         - Boolean - true if the filter was successfully uninstalled, otherwise false
-      """,
-      args: {filter_id, EthereumApi.Quantity.t()},
-      parsing_error_type: String.t(),
-      args_transformer!: &EthereumApi.Quantity.from_term!/1,
-      response_type: boolean(),
-      response_parser: &parse_boolean_response/1
-    },
-    %{
-      method: "eth_getFilterChanges",
-      doc: """
+      """
+
+      args {filter_id, EthereumApi.Quantity.t()}
+      parsing_error_type String.t()
+
+      args_transformer! &EthereumApi.Quantity.from_term!/1
+      response_type boolean()
+
+      response_parser &parse_boolean_response/1
+    end
+
+    method "eth_getFilterChanges" do
+      doc """
         Polling method for a filter, which returns an array of logs which occurred since last poll.
 
         # Parameters
@@ -830,19 +896,21 @@ defmodule EthereumApi do
           - For eth_newBlockFilter: Array of block hashes (Data32)
           - For eth_newPendingTransactionFilter: Array of transaction hashes (Data32)
           - nil when the response is empty
-      """,
-      args: {filter_id, EthereumApi.Quantity.t()},
-      args_transformer!: &EthereumApi.Quantity.from_term!/1,
-      response_type:
-        nil
-        | {:log, [EthereumApi.Log.t()]}
-        | {:hash, [EthereumApi.Data32.t()]},
-      parsing_error_type: String.t(),
-      response_parser: &parse_filer_result/1
-    },
-    %{
-      method: "eth_getFilterLogs",
-      doc: """
+      """
+
+      args {filter_id, EthereumApi.Quantity.t()}
+      args_transformer! &EthereumApi.Quantity.from_term!/1
+
+      response_type nil
+                    | {:log, [EthereumApi.Log.t()]}
+                    | {:hash, [EthereumApi.Data32.t()]}
+
+      parsing_error_type String.t()
+      response_parser &parse_filer_result/1
+    end
+
+    method "eth_getFilterLogs" do
+      doc """
         Returns an array of all logs matching filter with given id.
 
         # Parameters
@@ -850,16 +918,17 @@ defmodule EthereumApi do
 
         # Returns
         - Array of Log objects
-      """,
-      args: {filter_id, EthereumApi.Quantity.t()},
-      args_transformer!: &EthereumApi.Quantity.from_term!/1,
-      response_type: [EthereumApi.Log.t()],
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Log.from_term_list/1
-    },
-    %{
-      method: "eth_getLogs",
-      doc: """
+      """
+
+      args {filter_id, EthereumApi.Quantity.t()}
+      args_transformer! &EthereumApi.Quantity.from_term!/1
+      response_type [EthereumApi.Log.t()]
+      parsing_error_type String.t()
+      response_parser &EthereumApi.Log.from_term_list/1
+    end
+
+    method "eth_getLogs" do
+      doc """
         Returns an array of all logs matching a given filter object.
 
         A note on specifying topic filters: Topics are order-dependent. A transaction with a log
@@ -882,22 +951,25 @@ defmodule EthereumApi do
 
         # Returns
         - [Log.t()] - Array of log objects
-      """,
-      args:
-        {filter_options,
-         [
-           {:from_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-           {:to_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
-           {:block_hash, EthereumApi.Data32.t()},
-           {:address, EthereumApi.Data20.t() | [EthereumApi.Data20.t()]},
-           {:topics, [EthereumApi.Data32.t() | [EthereumApi.Data32.t()]]}
-         ]},
-      args_transformer!: &create_filter_options_object!(&1, true),
-      response_type: [EthereumApi.Log.t()],
-      parsing_error_type: String.t(),
-      response_parser: &EthereumApi.Log.from_term_list/1
-    }
-  ]
+      """
+
+      args {filter_options,
+            [
+              {:from_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
+              {:to_block, EthereumApi.Quantity.t() | EthereumApi.Tag.t()},
+              {:block_hash, EthereumApi.Data32.t()},
+              {:address, EthereumApi.Data20.t() | [EthereumApi.Data20.t()]},
+              {:topics, [EthereumApi.Data32.t() | [EthereumApi.Data32.t()]]}
+            ]}
+
+      args_transformer! &create_filter_options_object!(&1, true)
+
+      response_type [EthereumApi.Log.t()]
+      parsing_error_type String.t()
+
+      response_parser &EthereumApi.Log.from_term_list/1
+    end
+  end
 
   defp create_transaction_object!(transaction, opts) do
     check_elem_and_add_it_to_acc = fn {key, value}, acc ->
